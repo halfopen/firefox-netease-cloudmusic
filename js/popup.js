@@ -1,5 +1,5 @@
-$(document).ready(function() {
-    console.info("1");
-    var 歌手名元素 = $(".song-name");
-    歌手名元素.html(111);
+var app = angular.module("myApp", []);
+app.controller('myCtrl', function($scope) {
+    $scope.歌曲名 = "歌曲名";
+    console.info("angular enter");
 });
