@@ -21,9 +21,8 @@
     },
 
     "web_accessible_resources": [
-        "beasts/frog.jpg",
-        "beasts/turtle.jpg",
-        "beasts/snake.jpg"
+        "popup/imgs/loading.gif",
+        "popup/imgs/default_music_pic_163.jpg"
     ]
 
 }
