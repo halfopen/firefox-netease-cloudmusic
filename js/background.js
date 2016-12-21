@@ -21,7 +21,7 @@ function notify(message) {
     */
     var notification = browser.notifications.create(notificationId, {
         "type": "basic",
-        //"iconUrl": browser.extension.getURL("./icons/main.jpg"),
+        "iconUrl": browser.extension.getURL("./imgs/default_music_pic_163.jpg"),
         "title": title,
         "message": content
     });

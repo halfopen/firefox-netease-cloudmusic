@@ -12,6 +12,7 @@ function notifyExtension(e) {
 
     //console.log("content script sending message", { "url": "url:" + target.href });
     browser.runtime.sendMessage({ "url": target.href });
+    console.info(browser);
 }
 
 /*
