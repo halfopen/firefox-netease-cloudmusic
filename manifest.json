@@ -3,7 +3,7 @@
     "manifest_version": 2,
     "name": "netease-cloudmusic",
     "version": "1.0",
-
+    "author": "halfopen@yeah.net",
     "description": "网易云音乐",
     "homepage_url": "https://github.com/halfopen/firefox-netease-cloudmusic",
     "icons": {
@@ -11,8 +11,13 @@
     },
 
     "permissions": [
-        "activeTab"
+        "notifications"
     ],
+
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": ["content/jquery-3.1.1.min.js", "content/content.js"]
+    }],
 
     "browser_action": {
         "default_icon": "icons/main.jpg",
@@ -20,9 +25,16 @@
         "default_popup": "popup/popup.html"
     },
 
+    "options_ui": {
+        "page": "options/options.html"
+    },
+
     "web_accessible_resources": [
         "popup/imgs/loading.gif",
         "popup/imgs/default_music_pic_163.jpg"
-    ]
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    }
 
 }
