@@ -6,16 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>one-player</title>
 
-    <link rel="stylesheet" href="css/style-8d0ab347cf.css" />
+    <link rel="stylesheet" href="../css/style-8d0ab347cf.css" />
 
-    <link rel="stylesheet" href="./css/popup.css" />
-    <link rel="stylesheet" href="./css/font.css" />
+    <link rel="stylesheet" href="../css/popup.css" />
+    <link rel="stylesheet" href="../css/font.css" />
+    <link href="../css/ionic.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
     <div class="one-player">
         <div class="song-pic clickable">
-            <img src="./imgs/default_music_pic_163.jpg" />
+            <img src="../imgs/default_music_pic_163.jpg" />
         </div>
         <div class="one-player-info">
             <div class="one-player-play-bar">
@@ -23,7 +24,7 @@
             </div>
             <div class="one-player-name">
                 <h2 class="singer-name clickable"></h2>
-                <span class="song-name clickable"></span>
+                <span class="song-name clickable" ng-bind="歌曲名"></span>
             </div>
             <div class="progress">
                 <div class="progress-loaded"></div>
@@ -43,7 +44,13 @@
                     <div class="play-type control-item">
                         <i class="icon-loop-one"></i>
                     </div>
-                    <input id="lrc-check" type="checkbox" />
+
+                    <label class="toggle toggle-assertive">
+                        <input id="lrc-check" type="checkbox" />
+                        <div class="track">
+                            <div class="handle"><span class="Text">词</span></div>
+                        </div>
+                    </label>
                 </div>
                 <div class="play-time-bar">
                     <p>- <span class="play-time"></span></p>
@@ -66,10 +73,8 @@
             <div id="loading-song-list" class="loading">加载中...</div>
         </div>
     </div>
-    <script src="js/lib-93d23e6ab6.js"></script>
-
-    <script src="./js/util.js"></script>
-    <script src="./js/popup.js"></script>
+    <script src="../js/util.js"></script>
+    <script src="../js/popup.js"></script>
 </body>
 
 </html>

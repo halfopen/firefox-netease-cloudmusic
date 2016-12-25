@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../css/ionic.min.css" rel="stylesheet">
+</head>
+
+<body ng-app="myApp" ng-controller="myCtrl">
+    <h1>配置</h1>
+    <ul class="list">
+        <li class="item item-toggle">
+            <span ng-bind="isShowLrcTip">是否通过浏览器桌面通知显示歌词<span>
+            <label class="toggle toggle-balanced">
+                <input id="歌词开关" type="checkbox" />
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </li>
+    </ul>
+
+</body>
+<script src="../js/options.js"></script>
+
+</html>

@@ -3,27 +3,55 @@
     "manifest_version": 2,
     "name": "netease-cloudmusic",
     "version": "1.0",
-
+    "author": "halfopen@yeah.net",
     "description": "网易云音乐",
     "homepage_url": "https://github.com/halfopen/firefox-netease-cloudmusic",
     //插件图标
     "icons": {
-        "48": "icons/main.jpg"
+        "48": "imgs/default_music_pic_163.jpg"
     },
     //权限
     "permissions": [
-        "activeTab"
+        "notifications",
+        "storage",
+        "webRequest",
+        "tabs", 
+        "activeTab", 
+        "clipboardWrite", 
+         "*://m1.music.126.net///*", 
+         "*://m2.music.126.net///*", 
+         "*://p1.music.126.net///*", 
+         "*://p2.music.126.net///*", 
+         "*://p3.music.126.net///*", 
+         "*://p4.music.126.net///*", 
+         "*://p5.music.126.net///*", 
+         "*://p6.music.126.net///*", 
+         "*://p7.music.126.net///*", 
+         "*://p8.music.126.net///*", 
+         "*://p9.music.126.net///*"
     ],
-    //
+
+    "content_scripts": [{
+        "matches": ["http://music.163.com/*"],
+        "js": ["js/content.js"]
+    }],
+
     "browser_action": {
-        "default_icon": "icons/main.jpg",
+        "default_icon": "imgs/default_music_pic_163.jpg",
         "default_title": "网易云音乐",
-        "default_popup": "popup/popup.html"
+        "default_popup": "template/popup.html"
+    },
+
+    "options_ui": {
+        "page": "template/options.html"
     },
 
     "web_accessible_resources": [
-        "popup/imgs/loading.gif",
-        "popup/imgs/default_music_pic_163.jpg"
-    ]
+        "imgs/loading.gif",
+        "imgs/default_music_pic_163.jpg"
+    ],
+    "background": {
+        "scripts": ["js/background.js"]
+    }
 
 }
