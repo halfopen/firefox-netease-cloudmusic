@@ -1,25 +1,13 @@
-/*
-If the click was on a link, send a message to the background page.
-The message contains the link's URL.
-*/
+
+
 
 var Player = {
-	$:function(e) {
-        return document.querySelector(e)
-    },
-    $$:function(e) {
-        return Array.prototype.slice.apply(document.querySelectorAll(e))
-    },
 
-
-	"name":"",		//歌曲名
-	"volume":"",	//音量
-	"lrc":"",		//当前歌词
-	"lrcList":[],	//歌词元素列表
-	"progress":"",	//进度
-	"pTotal":"",	//总长度
-	"status":"",	//当前状态
-	"coverImg":"",	//封面图
+   	coverImg :"",
+   	progress :"",
+   	songName :"",
+   	artist :"",
+   	isPlaying:false,
 
 	//检查歌曲信息延迟时间
 	CHECK_MUSIC_CHANGE_DELAY:500,
@@ -38,13 +26,71 @@ var Player = {
 
     //初始化
 	init:function(){
-
+		console.info("初始化播放器");
 	},
-	update:function(){
-
+	sendSongInfo:function(songInfo){
+	    browser.runtime.sendMessage({
+	    	"name":"notify",
+	    	"data":songInfo,
+	    	"from":"content",
+	    	"to":"all"
+	    });
 	},
+	updateSongInfo:function(songInfo){
+		browser.runtime.sendMessage({
+			"name":"updateSongInfo",
+			"data":songInfo,
+			"from":"content",
+			"to":"background"
+		});
+	},
+	getSongInfo:function(){
+		var songInfo={};
+		songInfo.coverImg = this.getCoverImg();
+		songInfo.progress = this.getProgress();
+		songInfo.songName = this.getSongName();
+		songInfo.artist = this.getArtist();
+		songInfo.isPlaying = this.getIsPlaying();
+		return songInfo;
+	},
+
 	check:function(){
+		var songInfo=this.getSongInfo();
 
+		var needUpdate = false;
+		
+		if(songInfo.coverImg!=this.coverImg){
+			console.info(songInfo.coverImg, this.coverImg, songInfo.coverImg !=this.coverImg);
+			this.coverImg = songInfo.coverImg;
+			needUpdate = true;
+		}
+		if(songInfo.progress!=this.progress){
+			console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
+			this.progress = songInfo.progress;
+			this.updateSongInfo(songInfo);
+			//needUpdate = true;
+		}
+		if(songInfo.songName !=this.songName){
+			console.info(songInfo.songName, this.songName, songInfo.songName !=this.songName);
+			this.songName = songInfo.songName;
+			needUpdate = true;
+		}
+		if(songInfo.artist !=this.artist){
+			console.info(songInfo.artist, this.artist, songInfo.artist !=this.artist);
+			this.artist = songInfo.artist;
+			needUpdate = true;
+		}
+
+		if(songInfo.isPlaying !=this.isPlaying){
+			this.isPlaying = songInfo.isPlaying;
+			needUpdate = true;
+		}
+		
+		if(needUpdate==true){
+			//console.info(needUpdate);
+			this.updateSongInfo(songInfo);
+			this.sendSongInfo(songInfo);
+		}
 	},
 	afterInit:function(){
 
@@ -54,47 +100,98 @@ var Player = {
 	},
 	//获取进度 d%
 	getProgress:function(){
-		return this.progressEL.querySelector(".cur").style.width;
+		return $(".barbg.j-flag").querySelector(".cur").style.width;
 	},
 	//获取封面图片，去除图片大小参数
 	getCoverImg:function(){
-		return this.coverImgEl.src.replace(/\?[\S]*/ig,"");
+		return $(".head.j-flag img").src.replace(/\?[\S]*/ig,"");
 	},
 	//获取歌曲名
 	getSongName:function(){
-		return this.songNameEl.innerText;
+		return $(".play .f-thide.name").innerText;
 	},
 	//获取歌手名
 	getArtist:function(){
-		return this.artistEl.innerText;
+		return $(".play .by span").getAttribute("title");
+	},
+	//当前是否正在播放
+	getIsPlaying:function(){
+		return $(".ply.j-flag").className == "ply j-flag pas";	
+	},
+	getLrc:function(){
+		return "暂无歌词";
+	},
+	play:function(){
+		if($(".ply.j-flag").getAttribute("data-action") == "play")$(".ply.j-flag").click();
+	},
+	pause:function(){
+		if($(".ply.j-flag").getAttribute("data-action") == "pause")$(".ply.j-flag").click();
+	},
+	pre:function(){
+		$(".prv").click();
+		console.info("pre");
+	},
+	next:function(){
+		$(".nxt").click();
+		console.info("next");
 	}
 	
 }
 
-function notifyExtension(e) {
+Player.init();
 
-    var data = {
-    	"title":title, 
-    	"content":content,
-    	"iconUrl":coverImg
-    };
-    console.info("sendMessage",data);
-    browser.runtime.sendMessage({
-    	"name":"notify",
-    	"data":data,
-    	"from":"content",
-    	"to":"all"
-    });
+
+window.addEventListener("click",function(e){
+	Player.check();
+});
+
+setInterval(function(){
+
+	//console.info("check");
+	Player.check();
+},50);
+
+
+function contentReceiver(m){
+	console.info("content recieve",m);
+
+	if(m.to == "all" || m.to=="content"){
+		
+		if(m.name == "getSongInfo" && m.from=="popup"){
+
+			var songInfo=this.getSongInfo();
+			console.info("返回popup歌曲信息",songInfo);
+			//返回信息
+			browser.runtime.sendMessage({
+		    	"name":"getSongInfo",
+		    	"data":songInfo,
+		    	"from":"content",
+		    	"to":"popup"
+	    	});
+		}
+	}
 }
 
+browser.runtime.onMessage.addListener(contentReceiver);
 
-// function domChange(e){
-// 	console.info(browser.runtime.sendMessage({"url":"domChange"}));
-// }
 
-/*
-Add notifyExtension() as a listener to click events.
-*/
-// window.addEventListener("click", notifyExtension);
+var myPort = browser.runtime.connect({name:"port-from-cs"});
+myPort.postMessage({greeting: "hello from content script"});
 
-// document.addEventListener("change", domChange)
+//接收来自background的消息
+myPort.onMessage.addListener(function(m) {
+  console.log("In content script, received message from background script: ");
+  console.log(m);
+  if(m.action=="play"){
+  	Player.play();
+  }else if(m.action=="pause"){
+  	Player.pause();
+  }else if(m.action=="pre"){
+  	Player.pre();
+  }else if(m.action=="next"){
+  	Player.next();
+  }
+});
+
+
+myPort.postMessage({greeting: "they clicked the page!"});

@@ -1,27 +1,49 @@
-function receiver(m){
-    console.info("received a message",m);
+var SongInfo = {
+    coverImg :"",
+    progress :"",
+    songName :"",
+    artist :"",
+    isPlaying:false
+}
 
-    if(m.name=="notify"){
-        console.info("notify");
-        notify(m.data);
+
+
+function updateSongInfo(data){
+    console.info("update background");
+    if(data.coverImg!=undefined){
+        SongInfo.coverImg = data.coverImg;
     }
+
+    if(data.progress!=undefined){
+        SongInfo.progress = data.progress;
+    }
+
+    if(data.songName!=undefined){
+        SongInfo.songName = data.songName;
+    }
+
+    if(data.artist!=undefined){
+        SongInfo.artist = data.artist;
+    }
+
+    if(data.isPlaying!=undefined){
+        SongInfo.isPlaying = data.isPlaying;
+    }
+    console.info(SongInfo);
 }
 
 
 var notificationId = "lrcNotification";
 
 function notify(data) {
-
-    //var clearing = browser.notifications.clear(notificationId);
-
-    console.log("background script received message", data);
+    browser.notifications.clear(notificationId);
     var title,
         content,
         iconUrl;
-    title = data.title;
-    content = data.content;
-    if(data.iconUrl){
-        iconUrl = data.iconUrl;
+    title = data.songName;
+    content = data.artist;
+    if(data.coverImg){
+        iconUrl = data.coverImg;
     }else{
         iconUrl =browser.extension.getURL("./imgs/default_music_pic_163.jpg");
     }
@@ -41,4 +63,43 @@ function notify(data) {
     console.info(notification);
 }
 
-browser.runtime.onMessage.addListener(receiver);
+var portFromCS;
+
+function connected(p) {
+  portFromCS = p;
+
+  portFromCS.onMessage.addListener(function(m) {
+    console.log("In background script, received message from content script")
+    console.log(m);
+  });
+}
+
+function backgroundReceiver(m){
+    console.info("background received a message",m);
+    if(m.to == "background" || m.to=="all"){
+        if(m.name=="notify"){
+            console.info("notify");
+            notify(m.data);
+        }else if(m.name=="updateSongInfo"){
+            updateSongInfo(m.data);
+        }else if(m.name=="play"){
+            portFromCS.postMessage({"action":"play"});
+        }else if(m.name=="pause"){
+            portFromCS.postMessage({"action":"pause"});
+        }else if(m.name == "pre"){
+            portFromCS.postMessage({"action":"pre"});
+        }else if(m.name == "next"){
+            portFromCS.postMessage({"action":"next"});
+        }
+    }
+}
+browser.runtime.onMessage.addListener(backgroundReceiver);
+
+
+
+
+
+
+browser.runtime.onConnect.addListener(connected);
+
+

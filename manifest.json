@@ -33,7 +33,7 @@
 
     "content_scripts": [{
         "matches": ["http://music.163.com/*"],
-        "js": ["js/content.js"]
+        "js": ["js/base.js","js/content.js"]
     }],
 
     "browser_action": {
