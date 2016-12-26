@@ -3,7 +3,9 @@ var SongInfo = {
     progress :"",
     songName :"",
     artist :"",
-    isPlaying:false
+    isPlaying:false,
+    time:"",
+    lrc:""
 }
 
 
@@ -29,19 +31,38 @@ function updateSongInfo(data){
     if(data.isPlaying!=undefined){
         SongInfo.isPlaying = data.isPlaying;
     }
+
+    if(data.time!=undefined){
+        SongInfo.time = data.time;
+    }
+
+    if(data.lrc!=undefined){
+        SongInfo.lrc = data.lrc;
+    }
     console.info(SongInfo);
 }
 
 
-var notificationId = "lrcNotification";
+var notificationId = "id1";
+var clearId = "id1";
+var ntfNum=0;
+var lastLrc="";
 
 function notify(data) {
-    browser.notifications.clear(notificationId);
+    // if(ntfNum==0){  //只创建不清除
+    //     ntfNum=1;
+    // }else if(ntfNum==1){    //只创建不清除
+    //     ntfNum=2;
+    // }else if(ntfNum==2){              //清除一个
+    //     browser.notifications.clear(notificationId);        
+    // };
+    
+    
     var title,
         content,
         iconUrl;
-    title = data.songName;
-    content = data.artist;
+    title = data.songName+" - "+data.artist;
+    content = lastLrc+"\n"+data.lrc;
     if(data.coverImg){
         iconUrl = data.coverImg;
     }else{
@@ -60,7 +81,13 @@ function notify(data) {
         "title": title,
         "message": content
     });
-    console.info(notification);
+    lastLrc = data.lrc;
+
+    // if(notificationId=="id1"){
+    //     notificationId="id2";
+    // }else{
+    //     notificationId="id1";
+    // }
 }
 
 var portFromCS;

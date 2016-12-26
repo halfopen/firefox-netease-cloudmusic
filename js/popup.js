@@ -3,9 +3,9 @@
 	var isClick = false;
 
 	var play = function(){
-		isClick = true;
-		$("#play").className = "bg mid play f-hide";
-		$("#pause").className = "bg mid pause";
+		// isClick = true;
+		// $("#play").className = "bg mid play f-hide";
+		// $("#pause").className = "bg mid pause";
 		browser.runtime.sendMessage({
 	    	"name":"play",
 	    	"data":"",
@@ -14,25 +14,23 @@
 		});
 
 		
-		setTimeout(function(){
-			isClick = false;
-		},1000);
+		// setTimeout(function(){
+		// 	isClick = false;
+		// },1000);
 		
 	};
 
 	var pause = function(){
-		isClick = true;
-		$("#pause").className = "bg mid pause f-hide";
-		$("#play").className = "bg mid play";
+
+		// $("#pause").className = "bg mid pause f-hide";
+		// $("#play").className = "bg mid play";
 		browser.runtime.sendMessage({
 	    	"name":"pause",
 	    	"data":"",
 	    	"from":"popup",
 	    	"to":"background"
 		});
-		setTimeout(function(){
-			isClick = false;
-		},1000);
+
 	};
 
 	var pre = function(){
@@ -94,6 +92,10 @@
 
 	    if(data.artist!=undefined){
 	        //SongInfo.artist = data.artist;
+	    }
+
+	    if(data.time!=undefined){
+	    	$("#time").innerText = data.time;
 	    }
 
 	    if(data.isPlaying!=undefined){

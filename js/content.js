@@ -8,6 +8,9 @@ var Player = {
    	songName :"",
    	artist :"",
    	isPlaying:false,
+   	time:"",
+   	lrc:"",
+   	lrcList:[],
 
 	//检查歌曲信息延迟时间
 	CHECK_MUSIC_CHANGE_DELAY:500,
@@ -27,6 +30,8 @@ var Player = {
     //初始化
 	init:function(){
 		console.info("初始化播放器");
+		this.lrcList = this.getLrcList();
+		
 	},
 	sendSongInfo:function(songInfo){
 	    browser.runtime.sendMessage({
@@ -51,49 +56,109 @@ var Player = {
 		songInfo.songName = this.getSongName();
 		songInfo.artist = this.getArtist();
 		songInfo.isPlaying = this.getIsPlaying();
+		songInfo.time = this.getTime();
+		//sconsole.info(songInfo.time,parseFloat(time2Seconds(songInfo.time)));
+		songInfo.lrc = this.getLrc();
 		return songInfo;
 	},
 
 	check:function(){
 		var songInfo=this.getSongInfo();
-
+		if(this.lrcList.length==0){
+			console.info("重新获取歌词列表");
+			this.lrcList = this.getLrcList();
+			console.info(this.lrcList);
+		}else{
+			//console.info(this.lrcList);
+		}
 		var needUpdate = false;
 		
 		if(songInfo.coverImg!=this.coverImg){
 			console.info(songInfo.coverImg, this.coverImg, songInfo.coverImg !=this.coverImg);
 			this.coverImg = songInfo.coverImg;
+			this.lrcList = [];
+			this.lrc="";
 			needUpdate = true;
 		}
 		if(songInfo.progress!=this.progress){
-			console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
+			//console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
+			//console.info("lrc",this.lrcList);
+			//console.info("lrc:",this.getLrc());
 			this.progress = songInfo.progress;
-			this.updateSongInfo(songInfo);
+			//this.updateSongInfo(songInfo);
+			this.time = songInfo.time;
+
+
+			if(this.lrc!=songInfo.lrc){
+				this.lrc = songInfo.lrc;
+				needUpdate = true;
+				//显示歌词
+				this.sendSongInfo(songInfo);
+			}
 			//needUpdate = true;
 		}
 		if(songInfo.songName !=this.songName){
+			console.info("切歌");
 			console.info(songInfo.songName, this.songName, songInfo.songName !=this.songName);
 			this.songName = songInfo.songName;
+			this.lrcList = [];
+			this.lrc="";
 			needUpdate = true;
 		}
 		if(songInfo.artist !=this.artist){
 			console.info(songInfo.artist, this.artist, songInfo.artist !=this.artist);
 			this.artist = songInfo.artist;
+			this.lrcList = [];
+			this.lrc="";
 			needUpdate = true;
 		}
 
 		if(songInfo.isPlaying !=this.isPlaying){
 			this.isPlaying = songInfo.isPlaying;
+			this.lrcList = [];
+			this.lrc="";
 			needUpdate = true;
 		}
 		
 		if(needUpdate==true){
 			//console.info(needUpdate);
 			this.updateSongInfo(songInfo);
-			this.sendSongInfo(songInfo);
+			
 		}
 	},
 	afterInit:function(){
 
+	},
+	getLrcList:function(){
+		var list = [];
+		if(document.querySelector("#g_playlist")==null){
+			$(".icn.icn-list").click();
+			setTimeout(function(){
+				var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
+				var t,l;
+				
+				for(var i=0;i<lrcNodeList.length;i=i+1){
+					t = lrcNodeList[i].getAttribute("data-time");
+					l = lrcNodeList[i].innerText;
+					list.push({"time":t,"lrc":l})
+				}
+				$(".icn.icn-list").click();
+				
+			},2000);
+			
+		}else{
+			var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
+			var t,l;
+			setTimeout
+			console.info(this.lrcList);
+			for(var i=0;i<lrcNodeList.length;i=i+1){
+				t = lrcNodeList[i].getAttribute("data-time");
+				l = lrcNodeList[i].innerText;
+				list.push({"time":t,"lrc":l})
+			}
+		}
+
+		return list;
 	},
 	getVolume:function(){
 		return this.volumeEL.innerText;
@@ -118,9 +183,34 @@ var Player = {
 	getIsPlaying:function(){
 		return $(".ply.j-flag").className == "ply j-flag pas";	
 	},
+	//获取当前歌词
 	getLrc:function(){
-		return "暂无歌词";
+		var s = time2Seconds(this.time);
+		var lrc="";
+		var flag = false;
+
+		var currentTime = parseFloat(s);//当前时间
+
+		for(var i=0;i<this.lrcList.length;i=i+1){
+
+			if(flag==true && currentTime<parseFloat(this.lrcList[i].time)){
+				lrc = this.lrcList[i].lrc;
+				break;
+			}
+			//歌词开始标志
+			if(currentTime>parseFloat(this.lrcList[i].time)){
+				flag = true;
+			}
+		
+		}
+		return lrc;
 	},
+	//获取播放时间进度
+	getTime:function(){
+		return $(".j-flag.time em").innerText;
+	},
+
+
 	play:function(){
 		if($(".ply.j-flag").getAttribute("data-action") == "play")$(".ply.j-flag").click();
 	},
