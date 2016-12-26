@@ -8,7 +8,11 @@ var SongInfo = {
     lrc:""
 }
 
-
+var notificationId = "id1";
+var clearId = "id1";
+var ntfNum=0;
+var lrcArr = [];
+var lastCover="";
 
 function updateSongInfo(data){
     console.info("update background");
@@ -43,10 +47,7 @@ function updateSongInfo(data){
 }
 
 
-var notificationId = "id1";
-var clearId = "id1";
-var ntfNum=0;
-var lastLrc="";
+
 
 function notify(data) {
     // if(ntfNum==0){  //只创建不清除
@@ -57,12 +58,31 @@ function notify(data) {
     //     browser.notifications.clear(notificationId);        
     // };
     
+    //换歌里清空之前的歌词
+    if(lastCover!=data.coverImg){
+        lrcArr = [];
+        lastCover = data.coverImg;
+    }
+
+    //最多三条歌词记录
+    if(lrcArr.length>=3){
+        lrcArr.shift();
+        lrcArr.push(data.lrc);
+    }else if(lrcArr.length<3){
+        lrcArr.push(data.lrc);
+    }
+
+    console.info(lrcArr);
+    var lrcString = "";
+    for(var i=0;i<lrcArr.length;i++){
+        lrcString +=lrcArr[i]+"\n";
+    }
     
     var title,
         content,
         iconUrl;
     title = data.songName+" - "+data.artist;
-    content = lastLrc+"\n"+data.lrc;
+    content = lrcString;
     if(data.coverImg){
         iconUrl = data.coverImg;
     }else{
@@ -81,7 +101,7 @@ function notify(data) {
         "title": title,
         "message": content
     });
-    lastLrc = data.lrc;
+    lastLrc = lrcString;
 
     // if(notificationId=="id1"){
     //     notificationId="id2";
@@ -120,13 +140,9 @@ function backgroundReceiver(m){
         }
     }
 }
+//与popup通信
 browser.runtime.onMessage.addListener(backgroundReceiver);
-
-
-
-
-
-
+//与content.js通信
 browser.runtime.onConnect.addListener(connected);
 
 
