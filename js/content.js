@@ -269,14 +269,22 @@ myPort.postMessage({ greeting: "hello from content script" });
 myPort.onMessage.addListener(function(m) {
     console.log("In content script, received message from background script: ");
     console.log(m);
-    if (m.action == "play") {
-        Player.play();
-    } else if (m.action == "pause") {
-        Player.pause();
-    } else if (m.action == "pre") {
-        Player.pre();
-    } else if (m.action == "next") {
-        Player.next();
+    switch (m.action) {
+        case "play":
+            Player.play();
+            break;
+        case "pause":
+            Player.pause();
+            break;
+        case "pre":
+            Player.pre();
+            break;
+        case "next":
+            Player.next();
+            break;
+        default:
+            console.info("未知命令");
+            break;
     }
 });
 

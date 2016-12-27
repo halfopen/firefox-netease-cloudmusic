@@ -1,10 +1,10 @@
 (function() {
 
-    var sendCommand = function(e) {
+    var 发送命令 = function(e) {
         //console.info(e.target.getAttribute("data-action"));
-        var command = e.target.getAttribute("data-action");
+        var 命令 = e.target.getAttribute("data-action");
         browser.runtime.sendMessage({
-            "name": command,
+            "name": 命令,
             "data": "",
             "from": "popup",
             "to": "background"
@@ -22,16 +22,16 @@
 
     };
     //播放
-    $("#play").onclick = sendCommand;
+    $("#play").onclick = 发送命令;
     //暂停
-    $("#pause").onclick = sendCommand;
+    $("#pause").onclick = 发送命令;
     //上一首
-    $("#prev").onclick = sendCommand;
+    $("#prev").onclick = 发送命令;
     //下一首
-    $("#next").onclick = sendCommand;
+    $("#next").onclick = 发送命令;
 
 
-    function update(data) {
+    function 更新界面(data) {
         //console.info("update",data);
 
         if (data.coverImg !== undefined) {
@@ -47,7 +47,7 @@
         }
 
         if (data.artist !== undefined) {
-            //SongInfo.artist = data.artist;
+            //播放器信息.artist = data.artist;
         }
 
         if (data.time !== undefined) {
@@ -55,37 +55,34 @@
         }
 
         if (data.isPlaying !== undefined) {
-            if (isClick === false) {
-                if (data.isPlaying === true) {
-                    $("#play").className = "bg mid play f-hide";
-                    $("#pause").className = "bg mid pause";
-                } else {
-                    $("#pause").className = "bg mid pause f-hide";
-                    $("#play").className = "bg mid play";
-                }
+            if (data.isPlaying === true) {
+                $("#play").className = "bg mid play f-hide";
+                $("#pause").className = "bg mid pause";
+            } else {
+                $("#pause").className = "bg mid pause f-hide";
+                $("#play").className = "bg mid play";
             }
         }
     }
 
-    function init() {
+    function 初始化弹出框() {
         console.info("popup初始化");
-        var page = browser.extension.getBackgroundPage();
-        var songInfo = page.SongInfo;
-        //更新界面
-        update(songInfo);
+        var 后台页面 = browser.extension.getBackgroundPage();
+        var 播放器信息 = 后台页面.播放器信息;
+
+        更新界面(播放器信息);
     }
 
-    function check() {
-        var page = browser.extension.getBackgroundPage();
-        var songInfo = page.SongInfo;
-        update(songInfo);
+    function 检查更新() {
+        var 后台页面 = browser.extension.getBackgroundPage();
+        var 播放器信息 = 后台页面.播放器信息;
+        更新界面(播放器信息);
     }
 
     setInterval(function() {
 
-        //console.info("check");
-        check();
+        检查更新();
     }, 50);
 
-    init();
+    初始化弹出框();
 })();
