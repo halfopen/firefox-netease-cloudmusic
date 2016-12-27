@@ -1,78 +1,83 @@
 <html>
+
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="../css/base.css">
     <link rel="stylesheet" type="text/css" href="../css/popup.css">
 </head>
+
 <body>
-<!-- 播放器 -->
-<div id="player" style="width: 414px;">
-    <div class="player"> 
-        <!-- 播放器主界面 -->
-        <div class="f-cb"> 
+    <!-- 播放器 -->
+    <div id="player" style="width: 414px;">
+        <div class="player">
+            <!-- 播放器主界面 -->
+            <div class="f-cb">
 
-            <!-- 封面 -->
-            <div class="cover"> 
-                <img id="cover" src="http://p4.music.126.net/TJP-Kpa3v71mpBUCOGAqqg==/18727981556096564.jpg?param=90y90" /> 
-            </div> <!-- end of 封面 -->
+                <!-- 封面 -->
+                <div class="cover">
+                    <img id="cover" src="http://p4.music.126.net/TJP-Kpa3v71mpBUCOGAqqg==/18727981556096564.jpg?param=90y90" />
+                </div>
+                <!-- end of 封面 -->
 
-            <!-- 控制面板 -->
-            <div id="ctrl-box" class="ctrlBox" style="width: 304px;">
-                <!-- 歌曲名 -->
-                <h2 class="f-pr">
-                    <i data-action="home" class="bg logo"></i>
-                    <div id="title" class="title">[得不到]用林夕的话怎么说？(粤语篇)</div>
-                </h2> 
+                <!-- 控制面板 -->
+                <div id="ctrl-box" class="ctrlBox" style="width: 304px;">
+                    <!-- 歌曲名 -->
+                    <h2 class="f-pr">
+                        <i data-action="home" class="bg logo"></i>
+                        <div id="title" class="title">[得不到]用林夕的话怎么说？(粤语篇)</div>
+                    </h2>
 
-                <!-- 进度条 -->
-                <div id="bar" class="bar"> 
-                    <div class="played j-flag" style="width: 0%;">
-                        <span class="bg thumb j-flag" id="auto-id-Cor3k8zZ919NOIeA"></span>
-                    </div> 
-                </div> 
-
-                <!-- 控制按钮 -->
-                <div class="oprBox"> 
-                    <div id="time" class="time">0:00</div> 
-
-                    <div class="btnGroup f-cb">
-                        <!-- 上一首 -->
-                        <div id="prev" class="bg prev" data-action="prev"></div> 
-                        <!-- 播放/暂停 -->
-                        <div id="pause" class="bg mid pause f-hide" data-action="pause"></div> 
-                        <div id="play" class="bg mid play" data-action="play"></div> 
-                        <!-- 下一首 -->
-                        <div id="next" class="bg next" data-action="next"></div> 
+                    <!-- 进度条 -->
+                    <div id="bar" class="bar">
+                        <div class="played j-flag" style="width: 0%;">
+                            <span class="bg thumb j-flag" id="auto-id-Cor3k8zZ919NOIeA"></span>
+                        </div>
                     </div>
-                    <!-- 打开列表按钮 -->
-                    <div class="bg open " data-action="open"></div> 
-                </div> 
-            </div> 
-        </div>  <!-- end of 播放器主界面 -->
 
-        <!-- 歌曲列表 -->
-        <div id="list" class="list z-close" style=""> 
-            <div class="box" style=""> 
-                <ul class="f-cb" id="list-box">
-                    <li class="f-cb odd" data-action="playByIndex" data-index="0" style="width: 396px;">
-                        <div class="cur"></div>
-                        <div class="index">1</div>
-                        <div class="name f-thide" title="明年今日" style="width: 242.2px;">明年今日</div>
-                        <div class="by f-thide" style="width: 103.8px;">陈奕迅</div>
-                    </li>
-                </ul> 
-            </div> 
-            <div data-action="home" class="foot"> 
-                <div class="bg logo"></div> 
-                <div class="yyy">
-                   网易云音乐
-                </div> 
-                <div class="slogan">500万曲库 首首CD音质</div> 
-            </div> 
-        </div> 
-    </div> 
-</div>
-<script src="../js/base.js"></script>
-<script src="../js/popup.js"></script>
+                    <!-- 控制按钮 -->
+                    <div class="oprBox">
+                        <div id="time" class="time">0:00</div>
+
+                        <div class="btnGroup f-cb">
+                            <!-- 上一首 -->
+                            <div id="prev" class="bg prev" data-action="pre"></div>
+                            <!-- 播放/暂停 -->
+                            <div id="pause" class="bg mid pause f-hide" data-action="pause"></div>
+                            <div id="play" class="bg mid play" data-action="play"></div>
+                            <!-- 下一首 -->
+                            <div id="next" class="bg next" data-action="next"></div>
+                        </div>
+                        <!-- 打开列表按钮 -->
+                        <div class="bg open " data-action="open"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- end of 播放器主界面 -->
+
+            <!-- 歌曲列表 -->
+            <div id="list" class="list z-close" style="">
+                <div class="box" style="">
+                    <ul class="f-cb" id="list-box">
+                        <li class="f-cb odd" data-action="playByIndex" data-index="0" style="width: 396px;">
+                            <div class="cur"></div>
+                            <div class="index">1</div>
+                            <div class="name f-thide" title="明年今日" style="width: 242.2px;">明年今日</div>
+                            <div class="by f-thide" style="width: 103.8px;">陈奕迅</div>
+                        </li>
+                    </ul>
+                </div>
+                <div data-action="home" class="foot">
+                    <div class="bg logo"></div>
+                    <div class="yyy">
+                        网易云音乐
+                    </div>
+                    <div class="slogan">500万曲库 首首CD音质</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/base.js"></script>
+    <script src="../js/popup.js"></script>
 </body>
+
 </html>
