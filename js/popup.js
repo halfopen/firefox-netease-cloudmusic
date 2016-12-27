@@ -31,31 +31,31 @@
     $("#next").onclick = 发送命令;
 
 
-    function 更新界面(data) {
-        //console.info("update",data);
-
-        if (data.coverImg !== undefined) {
+    function updatePopupUI(data) {
+        console.info("update",data);
+        if(data==undefined)return;
+        if (data.coverImg !== undefined && data.coverImg.length>0) {
             $("#cover").src = data.coverImg;
         }
 
-        if (data.progress !== undefined) {
+        if (data.progress !== undefined && data.progress.length>0) {
             $(".played.j-flag").style.width = data.progress;
         }
 
-        if (data.songName !== undefined) {
+        if (data.songName !== undefined && data.songName.length>0) {
             $("#title").innerText = data.songName;
         }
 
-        if (data.artist !== undefined) {
-            //播放器信息.artist = data.artist;
+        if (data.artist !== undefined && data.artist.length>0) {
+
         }
 
-        if (data.time !== undefined) {
+        if (data.time !== undefined && data.time.length>0) {
             $("#time").innerText = data.time;
         }
 
         if (data.isPlaying !== undefined) {
-            if (data.isPlaying === true) {
+            if (data.isPlaying == true) {
                 $("#play").className = "bg mid play f-hide";
                 $("#pause").className = "bg mid pause";
             } else {
@@ -65,24 +65,24 @@
         }
     }
 
-    function 初始化弹出框() {
+    function initPopup() {
         console.info("popup初始化");
-        var 后台页面 = browser.extension.getBackgroundPage();
-        var 播放器信息 = 后台页面.播放器信息;
+        var page = browser.extension.getBackgroundPage();
+        var SongInfo = page.SongInfo;
 
-        更新界面(播放器信息);
+        updatePopupUI(SongInfo);
     }
 
-    function 检查更新() {
-        var 后台页面 = browser.extension.getBackgroundPage();
-        var 播放器信息 = 后台页面.播放器信息;
-        更新界面(播放器信息);
+    function check() {
+        var page = browser.extension.getBackgroundPage();
+        var SongInfo = page.SongInfo;
+        updatePopupUI(SongInfo);
     }
 
     setInterval(function() {
 
-        检查更新();
+        check();
     }, 50);
 
-    初始化弹出框();
+    initPopup();
 })();

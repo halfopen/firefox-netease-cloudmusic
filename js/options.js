@@ -3,10 +3,10 @@ console.info("设置页面");
 function 加载配置() {
     //加载配置
     var 本地是否显示歌词 = browser.storage.local.get('是否显示歌词');
-    本地是否显示歌词.then(function(res) {
-        console.info("加载配置", res);
+    本地是否显示歌词.then(function(本地配置) {
+        console.info("加载配置", 本地配置);
         var 歌词开关元素 = document.getElementById("歌词开关");
-        if (res && res.是否显示歌词) {
+        if (本地配置 && 本地配置.是否显示歌词) {
             歌词开关元素.checked = true;
         } else {
             歌词开关元素.checked = false;
