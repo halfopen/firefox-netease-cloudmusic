@@ -171,7 +171,7 @@ var Player = {
     },
     //获取封面图片，去除图片大小参数
     getCoverImg: function() {
-        return $(".head.j-flag img").src.replace(/\?[\S]*/ig, "");
+        return $(".head.j-flag img").src.replace(/\?[\S]*/ig, "")+"?param=90y90";
     },
     //获取歌曲名
     getSongName: function() {
