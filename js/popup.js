@@ -38,15 +38,15 @@
             $("#cover").src = data.coverImg;
         }
 
-        if (data.progress !== undefined && data.progress.length>0) {
+        if (data.progress != undefined) {
             $(".played.j-flag").style.width = data.progress;
         }
 
-        if (data.songName !== undefined && data.songName.length>0) {
+        if (data.songName != undefined && data.songName.length>0) {
             $("#title").innerText = data.songName;
         }
 
-        if (data.artist !== undefined && data.artist.length>0) {
+        if (data.artist != undefined && data.artist.length>0) {
 
         }
 

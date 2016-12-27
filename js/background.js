@@ -75,7 +75,7 @@ function notify(data) {
     console.info(lrcArr);
     var lrcString = "";
     for(var i=0;i<lrcArr.length;i++){
-        lrcString +=lrcArr[i]+"\n";
+        if(lrcArr[i].length>0)lrcString +=" · "+lrcArr[i]+"\n";
     }
     
     var title,

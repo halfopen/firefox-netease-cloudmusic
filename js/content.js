@@ -8,6 +8,7 @@ var Player = {
     time: "",
     lrc: "",
     lrcList: [],
+    isPureMusic:false,
 
     //检查歌曲信息延迟时间
     CHECK_MUSIC_CHANGE_DELAY: 500,
@@ -61,12 +62,14 @@ var Player = {
 
     check: function() {
         var songInfo = this.getSongInfo();
-        if (this.lrcList.length == 0) {
+        if (this.isPureMusic==false&& this.lrcList.length == 0) {
             console.info("重新获取歌词列表");
             this.lrcList = this.getLrcList();
             console.info(this.lrcList);
         } else {
-            //console.info(this.lrcList);
+            if(this.isPureMusic==true){
+                this.lrcList = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":5}];
+            }
         }
         var needUpdate = false;
 
@@ -78,7 +81,7 @@ var Player = {
             needUpdate = true;
         }
         if (songInfo.progress != this.progress) {
-            //console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
+            console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
             //console.info("lrc",this.lrcList);
             //console.info("lrc:",this.getLrc());
             this.progress = songInfo.progress;
@@ -92,7 +95,7 @@ var Player = {
                 //显示歌词
                 this.sendSongInfo(songInfo);
             }
-            //needUpdate = true;
+            needUpdate = true;
         }
         if (songInfo.songName != this.songName) {
             console.info("切歌");
@@ -128,12 +131,14 @@ var Player = {
     },
     getLrcList: function() {
         var list = [];
+        if(this.isPureMusic)return list;
         if (document.querySelector("#g_playlist") === null) {
             $(".icn.icn-list").click();
+            //纯音乐无歌词
+            if($(".nocnt.nolyric")!=null)this.isPureMusic = true;
             setTimeout(function() {
                 var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
                 var t, l;
-
                 for (var i = 0; i < lrcNodeList.length; i = i + 1) {
                     t = lrcNodeList[i].getAttribute("data-time");
                     l = lrcNodeList[i].innerText;
@@ -141,12 +146,12 @@ var Player = {
                 }
                 $(".icn.icn-list").click();
 
-            }, 2000);
+            }, 1000);
 
         } else {
             var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
             var t, l;
-
+            if($(".nocnt.nolyric")!=null)this.isPureMusic = true;
             console.info(this.lrcList);
             for (var i = 0; i < lrcNodeList.length; i = i + 1) {
                 t = lrcNodeList[i].getAttribute("data-time");
@@ -236,7 +241,7 @@ setInterval(function() {
 
     //console.info("check");
     Player.check();
-}, 50);
+}, 300);
 
 
 function contentReceiver(m) {
