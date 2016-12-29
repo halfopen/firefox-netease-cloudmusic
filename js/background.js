@@ -8,6 +8,11 @@ var SongInfo = {
     lrc:"",
     songList:[]
 }
+var notificationId = "id1";
+var clearId = "id1";
+var ntfNum=0;
+var lrcArr = [];
+var lastCover="";
 
 function 加载配置() {
     console.info("background 加载配置");
@@ -27,11 +32,10 @@ function 加载配置() {
 
 }
 
-var notificationId = "id1";
-var clearId = "id1";
-var ntfNum=0;
-var lrcArr = [];
-var lastCover="";
+function 保存配置(data){
+    //console.info("保存配置", data.是否显示歌词);
+    browser.storage.local.set({ '是否显示歌词': data.是否显示歌词 });
+}
 
 function updateSongInfo(data){
     //console.info("update background");
@@ -68,6 +72,14 @@ function updateSongInfo(data){
     //console.info(SongInfo);
 }
 
+function toggleLrcShow(data){
+    console.info("toggleLrcShow",data);
+    SongInfo.showLrc = data;
+    保存配置({"是否显示歌词":data});
+    if(data ==false){
+        browser.notifications.clear(notificationId);
+    }
+}
 
 
 
@@ -79,6 +91,7 @@ function notify(data) {
     // }else if(ntfNum==2){              //清除一个
     //     browser.notifications.clear(notificationId);        
     // };
+
     
     //换歌里清空之前的歌词
     if(lastCover!=data.coverImg){
@@ -151,7 +164,7 @@ function backgroundReceiver(m){
     if(m.to == "background" || m.to=="all"){
         if(m.name=="notify"){
             console.info("notify");
-            notify(m.data);
+            if(SongInfo.showLrc==true)notify(m.data);
         }else if(m.name=="updateSongInfo"){
             updateSongInfo(m.data);
         }else if(m.name=="play"){
@@ -166,6 +179,8 @@ function backgroundReceiver(m){
             portFromCS.postMessage({"action":"bar","data":m.data});
         }else if(m.name == "selectSongInList"){
             portFromCS.postMessage({"action":"selectSongInList", "data":m.data});
+        }else if(m.name == "toggleLrcShow"){
+            toggleLrcShow(m.data);
         }
     }
 }

@@ -81,6 +81,17 @@
             "from": "popup",
             "to": "background"
         });
+    };
+
+    //点击歌词开关
+    $("#lrc-switch").onclick = function(e){
+        console.info(this.checked);
+        browser.runtime.sendMessage({
+            "name":"toggleLrcShow",
+            "data":this.checked,
+            "from":"popup",
+            "to":"background"
+        })
     }
 
 

@@ -50,6 +50,7 @@
     initSongInfo:function(){
         this.lrc= "",
         this.lrcList= [],
+        this.songList = [],
         this.isPureMusic=false
     },
     getSongInfo: function() {
@@ -75,16 +76,16 @@
         if (this.isPureMusic==false && this.lrcList.length == 0 && parseInt(time2Seconds(songInfo.time))>5) {
             console.info("重新获取歌词列表");
             this.lrcList = this.getLrcList();
-            this.songList = this.getSongList();
             console.info(this.lrcList);
         } else {
             if(this.isPureMusic==true){
                 this.lrcList = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":5}];
                 console.info("纯音乐");
-                if(this.songList.length==0)this.songList = this.getSongList();
+                
             }
             
         }
+        
 
         //是否有信息更新
         var needUpdate = false;
@@ -162,6 +163,7 @@
                     l = lrcNodeList[i].innerText;
                     list.push({ "time": t, "lrc": l })
                 }
+            if(this.songList.length==0)this.songList = this.getSongList();
             $(".icn.icn-list").click();
 
         } else {
@@ -174,6 +176,7 @@
                 l = lrcNodeList[i].innerText;
                 list.push({ "time": t, "lrc": l });
             }
+            if(this.songList.length==0)this.songList = this.getSongList();
         }
 
         return list;
