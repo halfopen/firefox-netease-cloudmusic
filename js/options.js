@@ -14,7 +14,6 @@ function 加载配置() {
     }, function() {
         console.info("加载本地配置失败");
     });
-
 }
 
 function 保存配置() {

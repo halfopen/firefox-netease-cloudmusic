@@ -128,7 +128,6 @@
                 $("#play").className = "bg mid play";
             }
         }
-
         if(data.showLrc == true){
             $("#lrc-switch").checked = true;
         }else{

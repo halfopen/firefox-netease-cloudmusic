@@ -73,17 +73,10 @@
 
         //如果不是纯音乐,5秒后获取歌词列表
 
-        if (this.isPureMusic==false && this.lrcList.length == 0 && parseInt(time2Seconds(songInfo.time))>5) {
-            //console.info("重新获取歌词列表");
+        if (this.lrcList.length == 0 && parseInt(time2Seconds(songInfo.time))>5) {
+            console.info("重新获取歌词列表");
             this.lrcList = this.getLrcList();
-            //console.info(this.lrcList);
-        } else {
-            if(this.isPureMusic==true){
-                this.lrcList = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":5}];
-                //console.info("纯音乐");
-                
-            }
-            
+            console.info(this.lrcList);
         }
         
 
@@ -155,28 +148,33 @@
         if (document.querySelector("#g_playlist") === null) {
             $(".icn.icn-list").click();
             //纯音乐无歌词
-            if($(".nocnt.nolyric")!=null)this.isPureMusic = true;
-            var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
+            if($(".nocnt.nolyric")!=null){
+                list = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":100}];
+            }else{
+                var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
                 var t, l;
                 for (var i = 0; i < lrcNodeList.length; i = i + 1) {
                     t = lrcNodeList[i].getAttribute("data-time");
                     l = lrcNodeList[i].innerText;
                     list.push({ "time": t, "lrc": l })
                 }
-            if(this.songList.length==0)this.songList = this.getSongList();
+                if(this.songList.length==0)this.songList = this.getSongList();
+            }
             $(".icn.icn-list").click();
 
         } else {
-            var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
-            var t, l;
-            if($(".nocnt.nolyric")!=null)this.isPureMusic = true;
-            //console.info(this.lrcList);
-            for (var i = 0; i < lrcNodeList.length; i = i + 1) {
-                t = lrcNodeList[i].getAttribute("data-time");
-                l = lrcNodeList[i].innerText;
-                list.push({ "time": t, "lrc": l });
+            if($(".nocnt.nolyric")!=null){
+
+            }else{
+                var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
+                var t, l;
+                for (var i = 0; i < lrcNodeList.length; i = i + 1) {
+                    t = lrcNodeList[i].getAttribute("data-time");
+                    l = lrcNodeList[i].innerText;
+                    list.push({ "time": t, "lrc": l })
+                }
+                if(this.songList.length==0)this.songList = this.getSongList();
             }
-            if(this.songList.length==0)this.songList = this.getSongList();
         }
 
         return list;

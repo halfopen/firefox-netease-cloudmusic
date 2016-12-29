@@ -123,7 +123,7 @@ function notify(data) {
     }else{
         iconUrl =browser.extension.getURL("./imgs/default_music_pic_163.jpg");
     }
-    //console.log("notify",title, content,iconUrl);
+    console.log("notify",title, content,iconUrl);
 
     /*
         Firefox
