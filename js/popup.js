@@ -139,7 +139,7 @@
         console.info("popup初始化");
         var page = browser.extension.getBackgroundPage();
         var SongInfo = page.SongInfo;
-
+        console.info(SongInfo);
         updatePopupUI(SongInfo);
 
         setInterval(function() {
