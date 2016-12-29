@@ -7,7 +7,7 @@ var SongInfo = {
     time:"",
     lrc:"",
     songList:[]
-}
+};
 var notificationId = "id1";
 var clearId = "id1";
 var ntfNum=0;

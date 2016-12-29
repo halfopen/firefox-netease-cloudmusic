@@ -74,13 +74,13 @@
         //如果不是纯音乐,5秒后获取歌词列表
 
         if (this.isPureMusic==false && this.lrcList.length == 0 && parseInt(time2Seconds(songInfo.time))>5) {
-            console.info("重新获取歌词列表");
+            //console.info("重新获取歌词列表");
             this.lrcList = this.getLrcList();
-            console.info(this.lrcList);
+            //console.info(this.lrcList);
         } else {
             if(this.isPureMusic==true){
                 this.lrcList = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":5}];
-                console.info("纯音乐");
+                //console.info("纯音乐");
                 
             }
             
@@ -123,7 +123,7 @@
             needUpdate = true;
         }
         if (songInfo.artist != this.artist) {
-            console.info(songInfo.artist, this.artist, songInfo.artist != this.artist);
+            //console.info(songInfo.artist, this.artist, songInfo.artist != this.artist);
             this.artist = songInfo.artist;
             needUpdate = true;
             songChanged = true;
@@ -135,7 +135,7 @@
         }
         
         if(songChanged==true){
-            console.info("初始化歌曲");
+            //console.info("初始化歌曲");
             this.initSongInfo();
         }
 
@@ -170,7 +170,7 @@
             var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
             var t, l;
             if($(".nocnt.nolyric")!=null)this.isPureMusic = true;
-            console.info(this.lrcList);
+            //console.info(this.lrcList);
             for (var i = 0; i < lrcNodeList.length; i = i + 1) {
                 t = lrcNodeList[i].getAttribute("data-time");
                 l = lrcNodeList[i].innerText;
@@ -234,15 +234,9 @@
     getSongList:function(){
         var listEl = $$(".listbdc.j-flag li");
         var list = [];
-        console.info(null!=listEl,listEl);
+        //console.info(null!=listEl,listEl);
         for(var i=0;null!=listEl&&i<listEl.length;i++){
             var el = listEl[i];
-            console.info(el.getAttribute("data-id"), 
-                el.querySelector(".col-2").innerText, 
-                el.querySelector(".col-4 span").getAttribute("title"),
-                el.querySelector(".col-5").innerText,
-                el.className == "z-sel"
-            );
             
             var node = {
                 "id":el.getAttribute("data-id"), 
@@ -268,16 +262,16 @@
     //上一首
     pre: function() {
         $(".prv").click();
-        console.info("pre");
+        //console.info("pre");
     },
     //下一首
     next: function() {
         $(".nxt").click();
-        console.info("next");
+        //console.info("next");
     },
     //改变进度
     changeBar:function(t){
-        console.debug("改变进度条",t);
+        //console.debug("改变进度条",t);
         var progressEL = $(".barbg.j-flag");
         var n = progressEL.clientWidth * t,
             i = progressEL.getBoundingClientRect(),
@@ -302,7 +296,7 @@
         progressEL.dispatchEvent(s);//绑定事件
     },
     selectSongInSongList: function(id) {
-        console.info("selectSongInList",id);
+        //console.info("selectSongInList",id);
         var SongListContainer = $(".listbdc");
         if(null==SongListContainer){
             $(".icn.icn-list").click();
@@ -318,7 +312,7 @@
 
     //初始化
     init: function() {
-        console.info("初始化播放器");
+        //console.info("初始化播放器");
         this.lrcList = this.getLrcList();
 
         window.addEventListener("click", function(e) {
@@ -338,14 +332,14 @@ Player.init();
 
 var myPort=browser.runtime.connect({ name: "port-from-cs" });
         function contentReceiver(m) {
-            console.info("content recieve", m);
+            //console.info("content recieve", m);
 
             if (m.to == "all" || m.to == "content") {
 
                 if (m.name == "getSongInfo" && m.from == "popup") {
 
                     var songInfo = this.getSongInfo();
-                    console.info("返回popup歌曲信息", songInfo);
+                    //console.info("返回popup歌曲信息", songInfo);
                     //返回信息
                     browser.runtime.sendMessage({"name": "getSongInfo","data": songInfo,"from": "content","to": "popup"});
                 }
@@ -356,8 +350,8 @@ var myPort=browser.runtime.connect({ name: "port-from-cs" });
 
         //接收来自background的消息
         myPort.onMessage.addListener(function(m) {
-            console.log("In content script, received message from background script: ");
-            console.log(m);
+            //console.log("In content script, received message from background script: ");
+            //console.log(m);
             switch (m.action) {
                 case "play":
                     Player.play();
@@ -378,7 +372,7 @@ var myPort=browser.runtime.connect({ name: "port-from-cs" });
                     Player.selectSongInSongList(m.data);
                     break;
                 default:
-                    console.info("未知命令");
+                    //console.info("未知命令");
                     break;
             }
         });
