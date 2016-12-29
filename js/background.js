@@ -8,6 +8,24 @@ var SongInfo = {
     lrc:""
 }
 
+function 加载配置() {
+    console.info("background 加载配置");
+    //加载配置
+    var 本地是否显示歌词 = browser.storage.local.get('是否显示歌词');
+    本地是否显示歌词.then(function(本地配置) {
+        console.info("加载配置", 本地配置);
+        if (本地配置 && 本地配置.是否显示歌词) {
+            SongInfo.showLrc = true;
+        } else {
+            SongInfo.showLrc = false;
+        }
+    }, function() {
+        console.info("加载本地配置失败");
+        SongInfo.showLrc = true;
+    });
+
+}
+
 var notificationId = "id1";
 var clearId = "id1";
 var ntfNum=0;
@@ -88,13 +106,16 @@ function notify(data) {
     }else{
         iconUrl =browser.extension.getURL("./imgs/default_music_pic_163.jpg");
     }
-    console.log(title, content,iconUrl);
+    console.log("notify",title, content,iconUrl);
 
     /*
         Firefox
             Currently Firefox only supports "basic" here.
             Only 'type', 'iconUrl', 'title', and 'message' are supported.
     */
+
+
+
     var notification = browser.notifications.create(notificationId, {
         "type": "basic",
         "iconUrl": iconUrl,
@@ -140,6 +161,9 @@ function backgroundReceiver(m){
         }
     }
 }
+
+加载配置();
+
 //与popup通信
 browser.runtime.onMessage.addListener(backgroundReceiver);
 //与content.js通信

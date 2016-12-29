@@ -31,6 +31,7 @@ var Player = {
         this.lrcList = this.getLrcList();
 
     },
+    //发送歌词通知
     sendSongInfo: function(songInfo) {
         browser.runtime.sendMessage({
             "name": "notify",
@@ -47,6 +48,12 @@ var Player = {
             "to": "background"
         });
     },
+    //初始化歌曲相关信息
+    initSongInfo:function(){
+        this.lrc= "",
+        this.lrcList= [],
+        this.isPureMusic=false
+    },
     getSongInfo: function() {
         var songInfo = {};
         songInfo.coverImg = this.getCoverImg();
@@ -62,33 +69,39 @@ var Player = {
 
     check: function() {
         var songInfo = this.getSongInfo();
-        if (this.isPureMusic==false&& this.lrcList.length == 0) {
+
+        //如果不是纯音乐,5秒后获取歌词列表
+
+        if (this.isPureMusic==false && this.lrcList.length == 0 && parseInt(time2Seconds(songInfo.time))>5) {
             console.info("重新获取歌词列表");
             this.lrcList = this.getLrcList();
             console.info(this.lrcList);
         } else {
             if(this.isPureMusic==true){
                 this.lrcList = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":5}];
+                console.info("纯音乐");
             }
         }
+        //是否有信息更新
         var needUpdate = false;
+        //是否换歌
+        var songChanged = false;
+        //需要更新的信息
+        var updateData = {};
 
         if (songInfo.coverImg != this.coverImg) {
-            console.info(songInfo.coverImg, this.coverImg, songInfo.coverImg != this.coverImg);
+            //console.info(songInfo.coverImg, this.coverImg, songInfo.coverImg != this.coverImg);
             this.coverImg = songInfo.coverImg;
-            this.lrcList = [];
-            this.lrc = "";
             needUpdate = true;
+            songChanged = true;
         }
         if (songInfo.progress != this.progress) {
-            console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
-            //console.info("lrc",this.lrcList);
-            //console.info("lrc:",this.getLrc());
+            //console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
+
             this.progress = songInfo.progress;
-            //this.updateSongInfo(songInfo);
             this.time = songInfo.time;
-
-
+            //console.info(songInfo.progress, this.progress, songInfo.progress !=this.progress);
+            //进度条改变，歌词变化时显示歌词
             if (this.lrc != songInfo.lrc) {
                 this.lrc = songInfo.lrc;
                 needUpdate = true;
@@ -98,26 +111,27 @@ var Player = {
             needUpdate = true;
         }
         if (songInfo.songName != this.songName) {
-            console.info("切歌");
-            console.info(songInfo.songName, this.songName, songInfo.songName != this.songName);
+            //console.info("切歌");
+            //console.info(songInfo.songName, this.songName, songInfo.songName != this.songName);
             this.songName = songInfo.songName;
-            this.lrcList = [];
-            this.lrc = "";
+            songChanged = true;
             needUpdate = true;
         }
         if (songInfo.artist != this.artist) {
             console.info(songInfo.artist, this.artist, songInfo.artist != this.artist);
             this.artist = songInfo.artist;
-            this.lrcList = [];
-            this.lrc = "";
             needUpdate = true;
+            songChanged = true;
         }
 
         if (songInfo.isPlaying != this.isPlaying) {
             this.isPlaying = songInfo.isPlaying;
-            this.lrcList = [];
-            this.lrc = "";
             needUpdate = true;
+        }
+
+        if(songChanged==true){
+            console.info("初始化歌曲");
+            this.initSongInfo();
         }
 
         if (needUpdate == true) {
@@ -125,6 +139,7 @@ var Player = {
             this.updateSongInfo(songInfo);
 
         }
+
     },
     afterInit: function() {
 
@@ -144,7 +159,6 @@ var Player = {
                     l = lrcNodeList[i].innerText;
                     list.push({ "time": t, "lrc": l })
                 }
-                $(".icn.icn-list").click();
 
             }, 1000);
 
