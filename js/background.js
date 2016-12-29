@@ -34,7 +34,7 @@ var lrcArr = [];
 var lastCover="";
 
 function updateSongInfo(data){
-    console.info("update background");
+    //console.info("update background");
     if(data.coverImg!=undefined){
         SongInfo.coverImg = data.coverImg;
     }
@@ -65,7 +65,7 @@ function updateSongInfo(data){
     if(data.songList!=undefined){
         SongInfo.songList = data.songList;
     }
-    console.info(SongInfo);
+    //console.info(SongInfo);
 }
 
 
@@ -94,7 +94,7 @@ function notify(data) {
         lrcArr.push(data.lrc);
     }
 
-    console.info(lrcArr);
+    //console.info(lrcArr);
     var lrcString = "";
     for(var i=0;i<lrcArr.length;i++){
         if(lrcArr[i].length>0)lrcString +=" · "+lrcArr[i]+"\n";
@@ -110,7 +110,7 @@ function notify(data) {
     }else{
         iconUrl =browser.extension.getURL("./imgs/default_music_pic_163.jpg");
     }
-    console.log("notify",title, content,iconUrl);
+    //console.log("notify",title, content,iconUrl);
 
     /*
         Firefox
@@ -164,6 +164,8 @@ function backgroundReceiver(m){
             portFromCS.postMessage({"action":"next"});
         }else if(m.name == "bar"){
             portFromCS.postMessage({"action":"bar","data":m.data});
+        }else if(m.name == "selectSongInList"){
+            portFromCS.postMessage({"action":"selectSongInList", "data":m.data});
         }
     }
 }

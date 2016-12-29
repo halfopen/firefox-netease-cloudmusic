@@ -30,17 +30,37 @@
                 var liClassname = "f-cb odd";
                 if(i%2==0)liClassname="f-cb even";
                 if(song.sel==true)liClassname +=" z-sel";
-                var liHtml = '<li class="'+liClassname+'" data-action="playByIndex" data-index="0" style="width: 396px;">'+
+                var liHtml = '<li class="'+liClassname+'" data-id="'+song.id+'" data-action="playByIndex" data-index="0" style="width: 396px;">'+
                             '<div class="cur"></div>'+
                             '<div class="index">'+(i+1)+'</div>'+
-                            '<div class="name f-thide" title="'+song.name+'" style="width: 242.2px;">'+song.name+'</div>'+
-                            '<div class="by f-thide" style="width: 103.8px;">'+song.artist+'</div>'+
+                            '<div class="name f-thide" title="'+song.name+'" style="width: 250.2px;">'+song.name+' - '+song.artist+'</div>'+
+                            '<div class="by f-thide" style="width: 53.8px;">'+song.time+'</div>'+
                         '</li>';
                 
                 $("#list-box").innerHTML+=liHtml;
             }
             console.info("showList",$("#list ul").innerHTML);
             $("#list").className = "list";
+
+            $$("#list li").forEach(function(value,key){
+                //console.info(value,key);
+                value.onclick  = function(e){
+                
+                    
+
+                    browser.runtime.sendMessage({
+                        "name": "selectSongInList",
+                        "data": this.getAttribute("data-id"),
+                        "from": "popup",
+                        "to": "background"
+                    });
+
+                    $$("#list li").forEach(function(value,key){
+                        value.className = value.className.replace("z-sel","");
+                    });
+                    this.className +=" z-sel";
+                }
+            })
         }
 
     };
@@ -66,7 +86,7 @@
 
     //更新界面元素
     function updatePopupUI(data) {
-        console.info("update",data);
+        //console.info("update",data);
         if(data==undefined)return;
         if (data.coverImg !== undefined && data.coverImg.length>0) {
             $("#cover").src = data.coverImg;

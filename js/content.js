@@ -81,7 +81,7 @@
             if(this.isPureMusic==true){
                 this.lrcList = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":5}];
                 console.info("纯音乐");
-                this.songList = this.getSongList();
+                if(this.songList.length==0)this.songList = this.getSongList();
             }
             
         }
@@ -155,16 +155,14 @@
             $(".icn.icn-list").click();
             //纯音乐无歌词
             if($(".nocnt.nolyric")!=null)this.isPureMusic = true;
-            setTimeout(function() {
-                var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
+            var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
                 var t, l;
                 for (var i = 0; i < lrcNodeList.length; i = i + 1) {
                     t = lrcNodeList[i].getAttribute("data-time");
                     l = lrcNodeList[i].innerText;
                     list.push({ "time": t, "lrc": l })
                 }
-
-            }, 1000);
+            $(".icn.icn-list").click();
 
         } else {
             var lrcNodeList = $$(".listlyric.j-flag p.j-flag");
@@ -300,6 +298,19 @@
         ),
         progressEL.dispatchEvent(s);//绑定事件
     },
+    selectSongInSongList: function(id) {
+        console.info("selectSongInList",id);
+        var SongListContainer = $(".listbdc");
+        if(null==SongListContainer){
+            $(".icn.icn-list").click();
+            SongListContainer = $(".listbdc");
+            SongListContainer.querySelector('li[data-id="' + id + '"]').click();
+            $(".icn.icn-list").click();
+        }else{
+            SongListContainer.querySelector('li[data-id="' + id + '"]').click();
+        }
+        
+    },
     /***************************播放控制结束**************************/
 
     //初始化
@@ -316,9 +327,13 @@
             //console.info("check");
             Player.check();
         }, 300);
+    }
+}
+
+Player.init();
 
 
-        var myPort=browser.runtime.connect({ name: "port-from-cs" });
+var myPort=browser.runtime.connect({ name: "port-from-cs" });
         function contentReceiver(m) {
             console.info("content recieve", m);
 
@@ -356,21 +371,13 @@
                 case "bar":
                     Player.changeBar(m.data);
                     break;
+                case "selectSongInList":
+                    Player.selectSongInSongList(m.data);
+                    break;
                 default:
                     console.info("未知命令");
                     break;
             }
         });
-    }
-}
-
-Player.init();
-
-
-
-
-
-
-
 
 })(window);
