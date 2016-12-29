@@ -5,7 +5,8 @@ var SongInfo = {
     artist :"",
     isPlaying:false,
     time:"",
-    lrc:""
+    lrc:"",
+    songList:[]
 }
 
 function 加载配置() {
@@ -60,6 +61,9 @@ function updateSongInfo(data){
 
     if(data.lrc!=undefined){
         SongInfo.lrc = data.lrc;
+    }
+    if(data.songList!=undefined){
+        SongInfo.songList = data.songList;
     }
     console.info(SongInfo);
 }
@@ -143,7 +147,7 @@ function connected(p) {
 }
 
 function backgroundReceiver(m){
-    console.info("background received a message",m);
+    if(m.name!="updateSongInfo")console.info("background received a message",m);
     if(m.to == "background" || m.to=="all"){
         if(m.name=="notify"){
             console.info("notify");

@@ -18,6 +18,28 @@
         if ($("#list").className == "list") {
             $("#list").className = "list z-close";
         } else {
+            console.info("showList");
+            var page = browser.extension.getBackgroundPage();
+            var SongInfo = page.SongInfo;
+            var song={};
+            console.info(SongInfo.songList);
+            $("#list-box").innerHTML="";
+            console.info("showList",SongInfo.songList);
+            for(var i=0;i<SongInfo.songList.length;i++){
+                song = SongInfo.songList[i];
+                var liClassname = "f-cb odd";
+                if(i%2==0)liClassname="f-cb even";
+                if(song.sel==true)liClassname +=" z-sel";
+                var liHtml = '<li class="'+liClassname+'" data-action="playByIndex" data-index="0" style="width: 396px;">'+
+                            '<div class="cur"></div>'+
+                            '<div class="index">'+(i+1)+'</div>'+
+                            '<div class="name f-thide" title="'+song.name+'" style="width: 242.2px;">'+song.name+'</div>'+
+                            '<div class="by f-thide" style="width: 103.8px;">'+song.artist+'</div>'+
+                        '</li>';
+                
+                $("#list-box").innerHTML+=liHtml;
+            }
+            console.info("showList",$("#list ul").innerHTML);
             $("#list").className = "list";
         }
 
@@ -89,6 +111,10 @@
         var SongInfo = page.SongInfo;
 
         updatePopupUI(SongInfo);
+
+        setInterval(function() {
+            check();
+        }, 300);
     }
 
     function check() {
@@ -96,11 +122,6 @@
         var SongInfo = page.SongInfo;
         updatePopupUI(SongInfo);
     }
-
-    setInterval(function() {
-
-        check();
-    }, 50);
 
     initPopup();
 })();

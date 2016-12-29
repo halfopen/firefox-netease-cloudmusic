@@ -103,9 +103,10 @@ div.list.z-close{height:0 !important;overflow: hidden;display:none;}
 .list .box{height:300px;position:relative;}
 .list .box .track{position:absolute;right:0;top:0;width:7px;height:100%;}
 .list .box .scroll{position:absolute;top:0;right:0;width:7px;height:114px;background:#dadada;border-radius:3px;z-index:9999;}
-.list li{height:30px;position:relative;line-height:30px;padding-right:18px;float:left;}
-.list li.odd{background:#f7f7f7;}
-.list li.z-sel{background:#e9e9e9;}
+.list li{height:30px;position:relative;line-height:30px;padding-right:18px;float:left;cursor: pointer}
+.list li.odd{background:#ecf3ed;}
+/*.list li.z-sel{background:#e9e9e9;}*/
+.list li:hover{background: #ececec}
 .list li .cur{width:3px;height:22px;position:absolute;left:0;top:4px;display:none;background:#df2d2d;}
 .list li.z-sel .cur{display:block;}
 .list .index,.list .name{float:left;}

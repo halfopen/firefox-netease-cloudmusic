@@ -1,4 +1,5 @@
-var Player = {
+(function(){
+    var Player = {
 
     coverImg: "",
     progress: "",
@@ -8,7 +9,10 @@ var Player = {
     time: "",
     lrc: "",
     lrcList: [],
+    songList:[],
     isPureMusic:false,
+
+    
 
     //检查歌曲信息延迟时间
     CHECK_MUSIC_CHANGE_DELAY: 500,
@@ -25,12 +29,6 @@ var Player = {
     songNameEl: $(".play .f-thide.name"), //歌曲名
     artistEl: $(".play .by span a"), //歌手名
 
-    //初始化
-    init: function() {
-        console.info("初始化播放器");
-        this.lrcList = this.getLrcList();
-
-    },
     //发送歌词通知
     sendSongInfo: function(songInfo) {
         browser.runtime.sendMessage({
@@ -64,6 +62,8 @@ var Player = {
         songInfo.time = this.getTime();
         //sconsole.info(songInfo.time,parseFloat(time2Seconds(songInfo.time)));
         songInfo.lrc = this.getLrc();
+        //不用每次查找网页元素
+        songInfo.songList = this.songList;
         return songInfo;
     },
 
@@ -75,13 +75,17 @@ var Player = {
         if (this.isPureMusic==false && this.lrcList.length == 0 && parseInt(time2Seconds(songInfo.time))>5) {
             console.info("重新获取歌词列表");
             this.lrcList = this.getLrcList();
+            this.songList = this.getSongList();
             console.info(this.lrcList);
         } else {
             if(this.isPureMusic==true){
                 this.lrcList = [{"lrc":"纯音乐无歌词","time":0},{"lrc":"纯音乐无歌词","time":5}];
                 console.info("纯音乐");
+                this.songList = this.getSongList();
             }
+            
         }
+
         //是否有信息更新
         var needUpdate = false;
         //是否换歌
@@ -128,7 +132,7 @@ var Player = {
             this.isPlaying = songInfo.isPlaying;
             needUpdate = true;
         }
-
+        
         if(songChanged==true){
             console.info("初始化歌曲");
             this.initSongInfo();
@@ -226,21 +230,51 @@ var Player = {
         return $(".j-flag.time em").innerText;
     },
 
+    getSongList:function(){
+        var listEl = $$(".listbdc.j-flag li");
+        var list = [];
+        console.info(null!=listEl,listEl);
+        for(var i=0;null!=listEl&&i<listEl.length;i++){
+            var el = listEl[i];
+            console.info(el.getAttribute("data-id"), 
+                el.querySelector(".col-2").innerText, 
+                el.querySelector(".col-4 span").getAttribute("title"),
+                el.querySelector(".col-5").innerText,
+                el.className == "z-sel"
+            );
+            
+            var node = {
+                "id":el.getAttribute("data-id"), 
+                "name":el.querySelector(".col-2").innerText, 
+                "artist":el.querySelector(".col-4 span").getAttribute("title"),
+                "time":el.querySelector(".col-5").innerText,
+                "sel":el.className == "z-sel"
+            };
+            list.push(node);
+        }
+        return list;
+    },
 
+    /********************播放控制开始************************/
+    //播放
     play: function() {
         if ($(".ply.j-flag").getAttribute("data-action") == "play") $(".ply.j-flag").click();
     },
+    //暂停
     pause: function() {
         if ($(".ply.j-flag").getAttribute("data-action") == "pause") $(".ply.j-flag").click();
     },
+    //上一首
     pre: function() {
         $(".prv").click();
         console.info("pre");
     },
+    //下一首
     next: function() {
         $(".nxt").click();
         console.info("next");
     },
+    //改变进度
     changeBar:function(t){
         console.debug("改变进度条",t);
         var progressEL = $(".barbg.j-flag");
@@ -251,88 +285,92 @@ var Player = {
         s.initMouseEvent("mousedown", 
             !0,     //允许事件冒泡
             !0,     //可取消
-            window,      
-            0, 
-            0, 
-            0, 
-            i.left + n, 
-            i.top, 
-            !1, 
-            !1, 
-            !1, 
-            !1, 
-            0, 
-            null),
-        progressEL.dispatchEvent(s);
-    }
+            window, //当前window对象      
+            0,   
+            0,      //screenX
+            0,      //screenY
+            i.left + n,     //clientX
+            i.top,          //clientY
+            !1,     //controlKey
+            !1,     //altKey
+            !1,     //shiftKey
+            !1,     //metaKey
+            0,      //button
+            null    //相关点击对象
+        ),
+        progressEL.dispatchEvent(s);//绑定事件
+    },
+    /***************************播放控制结束**************************/
 
+    //初始化
+    init: function() {
+        console.info("初始化播放器");
+        this.lrcList = this.getLrcList();
+
+        window.addEventListener("click", function(e) {
+            Player.check();
+        });
+
+        setInterval(function() {
+
+            //console.info("check");
+            Player.check();
+        }, 300);
+
+
+        var myPort=browser.runtime.connect({ name: "port-from-cs" });
+        function contentReceiver(m) {
+            console.info("content recieve", m);
+
+            if (m.to == "all" || m.to == "content") {
+
+                if (m.name == "getSongInfo" && m.from == "popup") {
+
+                    var songInfo = this.getSongInfo();
+                    console.info("返回popup歌曲信息", songInfo);
+                    //返回信息
+                    browser.runtime.sendMessage({"name": "getSongInfo","data": songInfo,"from": "content","to": "popup"});
+                }
+            }
+        }
+
+        browser.runtime.onMessage.addListener(contentReceiver);
+
+        //接收来自background的消息
+        myPort.onMessage.addListener(function(m) {
+            console.log("In content script, received message from background script: ");
+            console.log(m);
+            switch (m.action) {
+                case "play":
+                    Player.play();
+                    break;
+                case "pause":
+                    Player.pause();
+                    break;
+                case "pre":
+                    Player.pre();
+                    break;
+                case "next":
+                    Player.next();
+                    break;
+                case "bar":
+                    Player.changeBar(m.data);
+                    break;
+                default:
+                    console.info("未知命令");
+                    break;
+            }
+        });
+    }
 }
 
 Player.init();
 
 
-window.addEventListener("click", function(e) {
-    Player.check();
-});
-
-setInterval(function() {
-
-    //console.info("check");
-    Player.check();
-}, 300);
 
 
-function contentReceiver(m) {
-    console.info("content recieve", m);
-
-    if (m.to == "all" || m.to == "content") {
-
-        if (m.name == "getSongInfo" && m.from == "popup") {
-
-            var songInfo = this.getSongInfo();
-            console.info("返回popup歌曲信息", songInfo);
-            //返回信息
-            browser.runtime.sendMessage({
-                "name": "getSongInfo",
-                "data": songInfo,
-                "from": "content",
-                "to": "popup"
-            });
-        }
-    }
-}
-
-browser.runtime.onMessage.addListener(contentReceiver);
 
 
-var myPort = browser.runtime.connect({ name: "port-from-cs" });
-myPort.postMessage({ greeting: "hello from content script" });
-
-//接收来自background的消息
-myPort.onMessage.addListener(function(m) {
-    console.log("In content script, received message from background script: ");
-    console.log(m);
-    switch (m.action) {
-        case "play":
-            Player.play();
-            break;
-        case "pause":
-            Player.pause();
-            break;
-        case "pre":
-            Player.pre();
-            break;
-        case "next":
-            Player.next();
-            break;
-        case "bar":
-            Player.changeBar(m.data);
-            break;
-        default:
-            console.info("未知命令");
-            break;
-    }
-});
 
 
-myPort.postMessage({ greeting: "they clicked the page!" });
+})(window);
