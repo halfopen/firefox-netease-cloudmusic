@@ -12,6 +12,7 @@
     };
 
 
+
     //点击 显示/隐藏 列表
     $(".bg.open").onclick = function() {
         if ($("#list").className == "list") {
@@ -30,7 +31,18 @@
     //下一首
     $("#next").onclick = 发送命令;
 
+    $("#bar").onclick = function(e){
+        var progress = e.offsetX/e.currentTarget.clientWidth;
+        browser.runtime.sendMessage({
+            "name": "bar",
+            "data": progress,
+            "from": "popup",
+            "to": "background"
+        });
+    }
 
+
+    //更新界面元素
     function updatePopupUI(data) {
         console.info("update",data);
         if(data==undefined)return;

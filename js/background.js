@@ -158,6 +158,8 @@ function backgroundReceiver(m){
             portFromCS.postMessage({"action":"pre"});
         }else if(m.name == "next"){
             portFromCS.postMessage({"action":"next"});
+        }else if(m.name == "bar"){
+            portFromCS.postMessage({"action":"bar","data":m.data});
         }
     }
 }

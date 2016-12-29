@@ -240,6 +240,30 @@ var Player = {
     next: function() {
         $(".nxt").click();
         console.info("next");
+    },
+    changeBar:function(t){
+        console.debug("改变进度条",t);
+        var progressEL = $(".barbg.j-flag");
+        var n = progressEL.clientWidth * t,
+            i = progressEL.getBoundingClientRect(),
+            s = document.createEvent("MouseEvents");
+        //创建一个键盘点击事件
+        s.initMouseEvent("mousedown", 
+            !0,     //允许事件冒泡
+            !0,     //可取消
+            window,      
+            0, 
+            0, 
+            0, 
+            i.left + n, 
+            i.top, 
+            !1, 
+            !1, 
+            !1, 
+            !1, 
+            0, 
+            null),
+        progressEL.dispatchEvent(s);
     }
 
 }
@@ -300,6 +324,9 @@ myPort.onMessage.addListener(function(m) {
             break;
         case "next":
             Player.next();
+            break;
+        case "bar":
+            Player.changeBar(m.data);
             break;
         default:
             console.info("未知命令");
